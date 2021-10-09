@@ -2,15 +2,11 @@ package SM2;
 
 import org.bouncycastle.asn1.*;
 import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
-import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.math.ec.ECPoint;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.math.BigInteger;
-import java.util.Enumeration;
 
 public class SM2Utils {
 
@@ -57,7 +53,7 @@ public class SM2Utils {
       System.out.println("C3 " + Util.byteToHex(c3));
 */
         //C1 C2 C3拼装成加密字串
-        String encryptData = Util.encodeHexString(c1.getEncoded());
+        String encryptData = Util.encodeHexString(c1.getEncoded()) + Util.encodeHexString(source) + Util.encodeHexString(c3);
         return Util.hexStringToBytes(encryptData);
     }
 
@@ -94,100 +90,26 @@ public class SM2Utils {
         return c2;
     }
 
-    public static byte[] sign(byte[] userId, byte[] privateKey, byte[] sourceData) throws IOException
+    public static void main(String[] args) throws Exception
     {
-        if (privateKey == null || privateKey.length == 0)
-        {
-            return null;
-        }
+        //生成密钥对
+        generateKeyPair();
 
-        if (sourceData == null || sourceData.length == 0)
-        {
-            return null;
-        }
+        String plainText = "ererfeiisgod";
+        byte[] sourceData = plainText.getBytes();
 
-        SM2 sm2 = SM2.Instance();
-        BigInteger userD = new BigInteger(privateKey);
-        System.out.println("userD: " + userD.toString(16));
-        System.out.println("");
+        //下面的秘钥可以使用generateKeyPair()生成的秘钥内容
+        // 国密规范正式私钥
+        String prik = "3690655E33D5EA3D9A4AE1A1ADD766FDEA045CDEAA43A9206FB8C430CEFE0D94";
+        // 国密规范正式公钥
+        String pubk = "04F6E0C3345AE42B51E06BF50B98834988D54EBC7460FE135A48171BC0629EAE205EEDE253A530608178A98F1E19BB737302813BA39ED3FA3C51639D7A20C7391A";
 
-        ECPoint userKey = sm2.ecc_point_g.multiply(userD);
-        System.out.println("椭圆曲线点X: " + userKey.getX().toBigInteger().toString(16));
-        System.out.println("椭圆曲线点Y: " + userKey.getY().toBigInteger().toString(16));
-        System.out.println("");
+        System.out.println("加密: ");
+        String cipherText = Util.encodeHexString(SM2Utils.encrypt(Util.hexToByte(pubk), sourceData));
+        System.out.println(cipherText);
+        System.out.println("解密: ");
+        plainText = Util.encodeHexString(SM2Utils.decrypt(Util.hexToByte(prik), Util.hexStringToBytes(cipherText)));
+        System.out.println(plainText);
 
-        SM3Digest sm3 = new SM3Digest();
-        byte[] z = sm2.sm2GetZ(userId, userKey);
-        System.out.println("SM3摘要Z: " + Util.getHexString(z));
-        System.out.println("");
-
-        System.out.println("M: " + Util.getHexString(sourceData));
-        System.out.println("");
-
-        sm3.update(z, 0, z.length);
-        sm3.update(sourceData, 0, sourceData.length);
-        byte[] md = new byte[32];
-        sm3.doFinal(md, 0);
-
-        System.out.println("SM3摘要值: " + Util.getHexString(md));
-        System.out.println("");
-
-        SM2Result sm2Result = new SM2Result();
-        sm2.sm2Sign(md, userD, userKey, sm2Result);
-        System.out.println("r: " + sm2Result.r.toString(16));
-        System.out.println("s: " + sm2Result.s.toString(16));
-        System.out.println("");
-
-        DERInteger d_r = new DERInteger(sm2Result.r);
-        DERInteger d_s = new DERInteger(sm2Result.s);
-        ASN1EncodableVector v2 = new ASN1EncodableVector();
-        v2.add(d_r);
-        v2.add(d_s);
-        DERObject sign = new DERSequence(v2);
-        byte[] signdata = sign.getDEREncoded();
-        return signdata;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static boolean verifySign(byte[] userId, byte[] publicKey, byte[] sourceData, byte[] signData) throws IOException
-    {
-        if (publicKey == null || publicKey.length == 0)
-        {
-            return false;
-        }
-
-        if (sourceData == null || sourceData.length == 0)
-        {
-            return false;
-        }
-
-        SM2 sm2 = SM2.Instance();
-        ECPoint userKey = sm2.ecc_curve.decodePoint(publicKey);
-
-        SM3Digest sm3 = new SM3Digest();
-        byte[] z = sm2.sm2GetZ(userId, userKey);
-        sm3.update(z, 0, z.length);
-        sm3.update(sourceData, 0, sourceData.length);
-        byte[] md = new byte[32];
-        sm3.doFinal(md, 0);
-        System.out.println("SM3摘要值: " + Util.getHexString(md));
-        System.out.println("");
-
-        ByteArrayInputStream bis = new ByteArrayInputStream(signData);
-        ASN1InputStream dis = new ASN1InputStream(bis);
-        DERObject derObj = dis.readObject();
-        Enumeration<DERInteger> e = ((ASN1Sequence) derObj).getObjects();
-        BigInteger r = ((DERInteger)e.nextElement()).getValue();
-        BigInteger s = ((DERInteger)e.nextElement()).getValue();
-        SM2Result sm2Result = new SM2Result();
-        sm2Result.r = r;
-        sm2Result.s = s;
-        System.out.println("r: " + sm2Result.r.toString(16));
-        System.out.println("s: " + sm2Result.s.toString(16));
-        System.out.println("");
-
-
-        sm2.sm2Verify(md, userKey, sm2Result.r, sm2Result.s, sm2Result);
-        return sm2Result.r.equals(sm2Result.R);
     }
 }
