@@ -22,7 +22,7 @@ public class tests {
 
         System.out.println("解密: ");
         String data = "04ADE0AFDD137B5E9B2CF3F4D71D329E06F3E8006598A12BB8B6A4B31F8E1D2266EFB1015812E10DC058940A3C8AB8BA29FFE788F85A5D236C3526BBA8D0E0A10D5806DAE0C2DEFADC1A49CE657D4311CDF65D9F38F1CF5004F2E4BA922EA538C9E75007CA0C7AADD8";
-        plainText = Util.encodeHexString(SM2Utils.decrypt(Util.hexStringToBytes(prik), Util.hexStringToBytes(data)));
+        plainText = Util.encodeHexString(SM2Utils.decrypt(Util.hexStringToBytes(prik), cipherText));
         System.out.println(plainText);
 
     }
