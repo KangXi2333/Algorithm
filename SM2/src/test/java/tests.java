@@ -1,5 +1,6 @@
 import SM2.SM2Utils;
 import SM2.Util;
+import ZipDecrypt.ZipDe;
 import org.junit.Test;
 
 public class tests {
@@ -25,5 +26,11 @@ public class tests {
         plainText = Util.encodeHexString(SM2Utils.decrypt(Util.hexStringToBytes(prik), cipherText));
         System.out.println(plainText);
 
+    }
+
+    @Test
+    public void testZipDe() {
+        ZipDe zipDe = new ZipDe();
+        zipDe.unzipWithPassword("D:\\WORK\\TargetField\\zipTest3.zip", "D:\\WORK\\TargetField\\unZip", "123456");
     }
 }

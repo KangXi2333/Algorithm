@@ -92,12 +92,18 @@ public class hash {
         return sm3Bytes;
     }
 
-    public static byte[] hmac(byte[] key, byte[] srcData) {
+    public static byte[] hmac(byte[] key, String filePath) throws IOException {
+        FileInputStream fis = new FileInputStream(filePath);
         KeyParameter keyParameter = new KeyParameter(key);
         SM3Digest digest = new SM3Digest();
         HMac mac = new HMac(digest);
         mac.init(keyParameter);
-        mac.update(srcData, 0, srcData.length);
+        byte[] buffer = new byte[1024];
+        int length = 1;
+        while ((length = fis.read(buffer, 0, 1024)) != -1) {
+            mac.update(buffer, 0, length);
+        }
+        fis.close();
         byte[] result = new byte[mac.getMacSize()];
         mac.doFinal(result, 0);
         return result;
@@ -114,6 +120,25 @@ public class hash {
             }
 
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return flag;
+    }
+
+    public static boolean verify(String filePath, String sm3HexString, byte[] key) {
+        boolean flag = false;
+        try {
+            // byte[] srcData = Util.hexToByte(srcStr);
+            byte[] sm3Hash = Util.hexToByte(sm3HexString);
+            byte[] newHash = hmac(key, filePath);
+            if (Arrays.equals(newHash, sm3Hash)) {
+                flag = true;
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
