@@ -31,6 +31,6 @@ public class tests {
     @Test
     public void testZipDe() {
         ZipDe zipDe = new ZipDe();
-        zipDe.unzipWithPassword("D:\\WORK\\TargetField\\zipTest3.zip", "D:\\WORK\\TargetField\\unZip", "123456");
+        zipDe.unzipWithPassword("D:\\WORK\\TargetField\\test\\解压.zip", "D:\\WORK\\TargetField\\test\\UnZip", "123456");
     }
 }

@@ -72,7 +72,6 @@ public class hash {
 
     public static byte[] SM3Encrypt(String filePath) throws FileNotFoundException {
         FileInputStream fis = new FileInputStream(filePath);
-        String resultHexString = "";
         byte[] sm3Bytes = null;
         try {
             SM3Digest sm3Digest = new SM3Digest();
