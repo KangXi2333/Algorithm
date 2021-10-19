@@ -1,4 +1,4 @@
-package SM2;
+package method.SM2;
 
 import org.bouncycastle.math.ec.ECPoint;
 

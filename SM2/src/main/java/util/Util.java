@@ -1,4 +1,4 @@
-package SM2;
+package util;
 
 import java.math.BigInteger;
 

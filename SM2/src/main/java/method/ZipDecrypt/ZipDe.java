@@ -1,4 +1,4 @@
-package ZipDecrypt;
+package method.ZipDecrypt;
 
 import net.lingala.zip4j.core.ZipFile;
 import org.apache.commons.lang3.StringUtils;

@@ -1,6 +1,6 @@
-package Hash;
+package method.Hash;
 
-import SM2.Util;
+import util.Util;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
@@ -8,7 +8,6 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.Arrays;

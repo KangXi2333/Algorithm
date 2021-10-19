@@ -1,20 +1,20 @@
-package Read;
+package method.Read;
 
-import org.bouncycastle.util.StringList;
+import entity.CompInfo;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class readTxt {
+public class ReadTxt {
     /**
      * 读取txt文件的内容
      * @param filePath 想要读取的文件对象
      * @return 返回文件内容
      */
-    public static boolean comp2txt(String filePath, String fileName, String fileSize){
+    public static boolean comp2txt(String filePath, List<CompInfo> compInfoList){
         List<String> strList = new ArrayList<String>();
-        boolean flag = false;
+        boolean flag = true;
         File file = new File(filePath);
         InputStreamReader read = null;
         BufferedReader reader = null;
@@ -51,24 +51,18 @@ public class readTxt {
 
         }
 
-        for (String s : strList) {
-            if(flag = (s.contains(fileName) && s.contains(fileSize))){
-                // System.out.println("存在");
-                break;
+        for(CompInfo comp : compInfoList) {
+            for (String s : strList) {
+                if(comp.setFlag((s.contains(comp.getFileName()) && s.contains(comp.getFileName()))) ){
+                    // System.out.println("存在");
+                    break;
+                }
             }
+            flag = flag && comp.isFlag();
         }
+
+
         return flag;
     }
 
-    public static void main(String[] args) {
-
-        String filePath = "D:\\WORK\\TargetField\\CoreFiles1.txt";
-        String s1 = "java_error_in_webstorm64.hprof";
-        String s2 = "1,155,720,249";
-        boolean status = false;
-
-        status = comp2txt(filePath, s1, s2);
-
-        System.out.println(status);
-    }
 }

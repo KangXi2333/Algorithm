@@ -1,4 +1,4 @@
-package SM2;
+package method.SM2;
 
 import org.bouncycastle.crypto.generators.ECKeyPairGenerator;
 import org.bouncycastle.crypto.params.ECDomainParameters;
